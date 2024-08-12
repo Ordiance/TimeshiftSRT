@@ -106,19 +106,3 @@ class Timecode:
         milliseconds = remainder % MS_PER_SECOND
 
         self.setTimeData(hours, minutes, seconds, milliseconds)
-
-
-# Example usage
-try:
-    timecode = Timecode("00:22:17,210")
-    totalTime = timecode.getTotalTime()
-    print(timecode)
-    print(totalTime)
-
-    totalTime += 5656200
-
-    timecode.setTotalTime(totalTime)
-
-    print(timecode)
-except ValueError as e:
-    print(e)

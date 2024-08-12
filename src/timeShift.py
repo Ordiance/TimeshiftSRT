@@ -5,6 +5,8 @@ from typing import List
 from src.SubtitleClass import Subtitle
 from src.TimecodeClass import Timecode
 
+LOGGING = True
+
 
 # Function to parse the SRT file
 def parseSRT(infile: Path) -> list:
@@ -19,9 +21,9 @@ def parseSRT(infile: Path) -> list:
         for block in blocks:
             index, startTime, endTime, content = parseSubtitle(block)
 
-            print(f"Start Time: {startTime}")
-            print(f"End Time: {endTime}")
-            print(f"Content: {content}'\n")
+            # print(f"Start Time: {startTime}")
+            # print(f"End Time: {endTime}")
+            # print(f"Content: {content}'\n")
 
             # Adding the subtitle to the list
             subtitles.append(Subtitle(index, startTime, endTime, content))
@@ -92,17 +94,18 @@ def applyTimeShift(
 
         subtitle.setStartTime(startTime)
         subtitle.setEndTime(endTime)
-
-        print(f"Retimed subtile [{subtitle.getIndex()}] with content:")
-        print(content)
-        print(f"StartTime: {oldStart} ----> {startTime}")
-        print(f"EndTime: {oldEnd} ----> {endTime}\n")
+        if LOGGING:
+            print(f"Retimed subtile [{subtitle.getIndex()}] with content:")
+            print(content)
+            print(f"StartTime: {oldStart} ----> {startTime}")
+            print(f"EndTime: {oldEnd} ----> {endTime}\n")
 
     else:
-        print(f"Skipped subtile [{subtitle.getIndex()}] with content:")
-        print(content)
-        print(f"StartTime: {startTime}")
-        print(f"EndTime: {endTime}\n")
+        if LOGGING:
+            print(f"Skipped subtile [{subtitle.getIndex()}] with content:")
+            print(content)
+            print(f"StartTime: {startTime}")
+            print(f"EndTime: {endTime}\n")
 
     return subtitle
 
@@ -120,8 +123,15 @@ def writeSRT(subtitles: List[Subtitle], outfile: Path) -> None:
 
 
 def runTimeShift(
-    infile: Path, outfile: Path, timeshiftAfter: Timecode, duration: Timecode
+    infile: Path,
+    outfile: Path,
+    timeshiftAfter: Timecode,
+    duration: Timecode,
+    logging: bool = True,
 ):
+    global LOGGING
+    LOGGING = logging
+
     subtitles = parseSRT(infile)
     newSubtitles = editSubtitles(subtitles, timeshiftAfter, duration)
     writeSRT(newSubtitles, outfile)
